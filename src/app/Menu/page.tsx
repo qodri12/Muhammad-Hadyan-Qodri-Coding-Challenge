@@ -13,7 +13,7 @@ const columns = [
 
 export default function Menu() {
 
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<{ id: number; name: string; harga: string }[]>([]);
   const [menu, setMenu] = useState('');
   const [harga, setHarga] = useState('');
 

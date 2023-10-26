@@ -5,25 +5,34 @@ import RadioSelect from '@/components/RadioSelect/RadioSelect'
 import SelectComponent from '@/components/SelectComponent/SelectComponent'
 import React, { useState, useEffect } from 'react'
 
+type OrderType = {
+  tableNumber: string;
+  selectedOption: string;
+  selectedQuantity: string;
+  price: number;
+};
+
+type MenuPrices = Record<string, number>;
+
 const Order = () => {
 
   const [selectedOption, setSelectedOption] = useState('Pilih pesanan');
   const [selectedQuantity, setSelectedQuantity] = useState('Pilih jumlah');
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState<string[]>([]);
   const quantities = [1, 2, 3, 4, 5];
   const [tableNumber, setTableNumber] = useState('');
-  const [orderDetails, setOrderDetails] = useState(null);
-  const [orders, setOrders] = useState([]);
-  const [menuPrices, setMenuPrices] = useState({});
+  const [orderDetails, setOrderDetails] = useState<OrderType | null>(null);
+  const [orders, setOrders] = useState<OrderType[]>([]);
+  const [menuPrices, setMenuPrices] = useState<MenuPrices>({});
 
 
   useEffect(() => {
     const storedData = localStorage.getItem('myData');
     if (storedData) {
-      const parsedData = JSON.parse(storedData);
-      const uniqueOptions = [...new Set(parsedData.map((item) => item.name))];
+      const parsedData: any[] = JSON.parse(storedData);
+      const uniqueOptions = Array.from(new Set(parsedData.map((item:any) => item.name)));
       setOptions(uniqueOptions);
-      const menuPrices = {};
+      const menuPrices: MenuPrices = {};
       parsedData.forEach((item) => {
         menuPrices[item.name] = item.harga;
       });
@@ -44,7 +53,7 @@ const Order = () => {
   };
 
   const handleOrderButtonClick = () => {
-    const order = {
+    const order: OrderType = {
       tableNumber,
       selectedOption,
       selectedQuantity,

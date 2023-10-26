@@ -5,19 +5,27 @@ import SelectComponent from '@/components/SelectComponent/SelectComponent'
 import Table from '@/components/Table/Table'
 import React, { useState, useEffect } from 'react'
 
+type Order = {
+    id: string;
+    tableNumber: string;
+    selectedOption: string;
+    selectedQuantity: number;
+    price: number;
+};
+
 const Cashier = () => {
 
     const [selectedTable, setSelectedTable] = useState('Pilih Nomor Meja');
-    const [tableOptions, setTableOptions] = useState([]);
-    const [selectedOrders, setSelectedOrders] = useState([]);
+    const [tableOptions, setTableOptions] = useState<string[]>([]);
+    const [selectedOrders, setSelectedOrders] = useState<Order[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [selectedTableToClear, setSelectedTableToClear] = useState('Pilih Nomor Meja');
 
     useEffect(() => {
         const storedOrders = localStorage.getItem('orders');
         if (storedOrders) {
-            const orders = JSON.parse(storedOrders);
-            const tableNumbers = Array.from(new Set(orders.map(order => order.tableNumber)));
+            const orders: Order[] = JSON.parse(storedOrders);
+            const tableNumbers = Array.from(new Set(orders.map((order: any) => order.tableNumber)));
             setTableOptions(tableNumbers);
         }
     }, []);
@@ -31,9 +39,9 @@ const Cashier = () => {
         const storedOrders = localStorage.getItem('orders');
         if (storedOrders) {
             const orders = JSON.parse(storedOrders);
-            const selected = orders.filter((order:any) => order.tableNumber === selectedTable);
+            const selected = orders.filter((order: any) => order.tableNumber === selectedTable);
             setSelectedOrders(selected);
-            const total = selected.reduce((acc:any, order:any) => acc + (order.price * order.selectedQuantity), 0);
+            const total = selected.reduce((acc: any, order: any) => acc + (order.price * order.selectedQuantity), 0);
             setTotalPrice(total);
         }
     };
@@ -41,17 +49,12 @@ const Cashier = () => {
     const handleClearTable = () => {
         const storedOrders = localStorage.getItem('orders');
         if (storedOrders) {
-          const orders = JSON.parse(storedOrders);
-          const ordersToKeep = orders.filter((order:any) => order.tableNumber !== selectedTableToClear);
-          localStorage.setItem('orders', JSON.stringify(ordersToKeep));
-          setSelectedOrders([]);
-          setTotalPrice(0);
+            const orders = JSON.parse(storedOrders);
+            const ordersToKeep = orders.filter((order: any) => order.tableNumber !== selectedTableToClear);
+            localStorage.setItem('orders', JSON.stringify(ordersToKeep));
+            setSelectedOrders([]);
+            setTotalPrice(0);
         }
-      };
-
-    const handleDeleteOrder = (id:any) => {
-        const updatedOrders = selectedOrders.filter((order) => order.id !== id);
-        setSelectedOrders(updatedOrders);
     };
 
     return (
@@ -81,9 +84,8 @@ const Cashier = () => {
                 </div>
                 <div className="mt-5">
                     <Table
-                        showEditButton={true}
+                        showEditButton={false}
                         data={selectedOrders}
-                        onDelete={handleDeleteOrder}
                         columns={[
                             { label: 'Pilihan Pesanan', field: 'selectedOption' },
                             { label: 'Jumlah Pesanan', field: 'selectedQuantity' },
